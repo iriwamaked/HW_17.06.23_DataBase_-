@@ -1,0 +1,102 @@
+/*1. Показать горизонтальную линию из * длиной @L*/
+DECLARE @L int = 20, @temp int=0
+DECLARE @result nvarchar(25)='*'
+WHILE @temp!=@L
+BEGIN
+	SET @result+= '*'
+	SET @temp+=1
+END
+PRINT @result
+
+/*2. Скрипт проверяет, какое сейчас время суток и выдает приветствие
+"Добрый вечер" или "Доброе день"*/
+DECLARE @TimeNow TIME=GETDATE()
+IF @TimeNow>='06:00:00' AND @TimeNow<'12:00:00'
+	PRINT 'Доброе утро'
+ElSE IF @TimeNow>='12:00:00' AND @TimeNow<'17:00:00'
+	PRINT 'Добрый день'
+ELSE
+	PRINT 'Добрый вечер'
+
+/*3. Скрипт генерирует случайный сложный пароль длиной @N символов*/
+DECLARE @N int = 10 
+DECLARE @password nvarchar(MAX) = ''
+/*варианты символов*/
+DECLARE @chars NVARCHAR(100) = 'fbcdekoqmlpnsdieosKUIOPL<WAHWE123456789!@#$%^&*(){}'
+
+WHILE LEN(@password) < @N
+BEGIN
+	/*SUBSTRING - извлекает подстроки из строки. Параметры: строка, начальная позиция 
+	(позиции нумеруются с 1), длина - количество символов, которые нужно извлечь.
+	Если длина 0 - будет выбрана подстрока до конца строки
+	RAND() - генерирует случайное число от 0 до 1. Для генерации случайного числа в пределелах длины строки
+	умножаем на длину строки -1 (для правильного диапазона индексов, индексі символов в строке нумеруются с 1)
+	*/
+    SET @password = @password + SUBSTRING(@chars, CAST(ROUND(RAND() * (LEN(@chars) -1), 0) AS int) + 1, 1)
+END
+
+PRINT @password
+
+/*4. Показать факториалы всех чисел от 0 до 25*/
+DECLARE @num int = 0, @resultFact numeric(38,0)=1;
+WHILE @num<=25
+BEGIN
+	IF @num=0
+		SET @resultFact=1;
+	ELSE
+		SET @resultFact=@resultFact*@num;
+
+	PRINT 'Факториал числа ' + CAST(@num AS varchar) + ' = ' + CAST (@resultFact AS varchar)
+	SET @num+=1;
+END
+
+/*5. Показать все простые числа от 3 до 1000000*/
+DECLARE @first int =3, @last int=1000000, @isSimple bit
+DECLARE @number int = @first
+
+WHILE @number<=@last
+BEGIN 
+	SET @isSimple=1
+	DECLARE @div int = 2
+	WHILE @div<=SQRT(@number)
+	BEGIN
+		IF @number%@div=0
+		BEGIN 
+			SET @isSimple=0;
+			BREAK
+		END
+		SET @div=@div+1
+	END
+
+	IF @isSimple=1
+	BEGIN
+		PRINT CAST(@number AS varchar)
+	END
+
+	SET @number=@number+1
+END
+
+/*6. Показать номера всех счастливых трамвайных билетов*/
+DECLARE @firstNum int = 100000, @lastNum int = 999999
+DECLARE @currentNum int = @firstNum
+
+WHILE @currentNum<=@lastNum
+BEGIN
+	DECLARE @str varchar(6) = CAST(@currentNUm AS varchar(6))
+	DECLARE @sum int =0, @sum2 int = 0
+
+	DECLARE @i int = 1
+
+	WHILE @i<=3
+	BEGIN
+		SET @sum=@sum+CAST(SUBSTRING(@str, @i, 1) AS int)
+		SET @sum2=@sum2 + CAST(SUBSTRING (@str, @i+3, 1) AS int)
+		SET @i+=1
+	END
+
+	IF @sum=@sum2
+	BEGIN
+		PRINT @str
+	END
+	SET @currentNum+=1
+END
